@@ -7,8 +7,10 @@
 - 供其他 Python 项目 `import` 调用，也可通过 CLI 使用
 - 提供流式构建器 API，调用直觉化
 - 支持 JSON/dict 配置驱动生成（适合模板化场景）
-- 内置 10 套精心设计的主题，开箱即美
+- 内置 11 套精心设计的主题，开箱即美
 - 支持加载自定义 `.docx` 模板（企业品牌场景）
+- 支持 DOCX -> HTML/PDF（通过 pandoc，可选能力）
+- 提供 Streamlit Web 示例，方便快速体验与演示
 
 ---
 
@@ -31,6 +33,7 @@ EpicDoc (builder.py)
     │
     ├── Schema (schema.py)       ← JSON dict → builder 调用
     ├── CLI (cli.py)             ← click CLI，调用 schema.py
+    ├── Converters (converters/) ← DOCX -> HTML/PDF（pandoc，可选）
     │
     └── Utils (utils/)
         ├── xml_helpers.py       ← python-docx 底层 XML 操作封装
@@ -174,6 +177,10 @@ doc.add_horizontal_rule()      # 水平分隔线
 ```python
 doc.save('output.docx')
 data: bytes = doc.to_bytes()   # 适合 HTTP 响应 / 内存传递
+
+# 可选：通过 pandoc 导出 HTML/PDF（需要系统安装 pandoc）
+html_bytes: bytes = doc.to_html_bytes()
+pdf_bytes: bytes = doc.to_pdf_bytes()
 ```
 
 ---
@@ -268,6 +275,9 @@ data: bytes = doc.to_bytes()   # 适合 HTTP 响应 / 内存传递
 # 从 JSON 配置生成文档
 epic-doc generate config.json -o output.docx
 
+# 同时导出 HTML/PDF（需要 pandoc）
+epic-doc generate config.json -o output.docx --also-html --also-pdf
+
 # 验证 JSON 配置（不生成文档）
 epic-doc validate config.json
 
@@ -294,6 +304,7 @@ epic-doc preview --all -o /tmp/previews/
 | `click` | ≥8.0 | CLI 框架 |
 | `lxml` | ≥5.0 | XML 操作（python-docx 依赖，直接使用） |
 | `Pillow` | ≥10.0 | 图片处理 |
+| `pandoc` | — | DOCX -> HTML/PDF（系统依赖，可选） |
 
 > **注意**：`graphviz` Python 包需要系统安装 graphviz 可执行文件（`brew install graphviz` / `apt install graphviz`）。若未安装，调用 `add_flowchart()` 时会抛出明确的 `ImportError` 提示，不影响其他功能。
 
@@ -304,32 +315,36 @@ epic-doc preview --all -o /tmp/previews/
 ### Phase 1 — 核心基础（当前）
 - [x] 项目骨架：目录结构、pyproject.toml、.gitignore
 - [x] DESIGN.md 设计文档
-- [ ] 主题系统：Theme dataclass + 10 套主题
-- [ ] 工具层：xml_helpers + tempfiles
-- [ ] 文本元素：标题/段落/列表/超链接/代码块/callout
-- [ ] 核心 Builder 类
+- [x] 主题系统：Theme dataclass + 11 套主题
+- [x] 工具层：xml_helpers + tempfiles
+- [x] 文本元素：标题/段落/列表/超链接/代码块/callout/hr
+- [x] 核心 Builder 类
 
 ### Phase 2 — 表格与图表
-- [ ] 复杂表格：合并单元格、斑马纹、边框自定义、5 种样式预设
-- [ ] matplotlib 图表：bar/hbar/line/pie/area/scatter/combo
-- [ ] graphviz 流程图：多形状、多方向、彩色节点
+- [x] 复杂表格：合并单元格、斑马纹、边框自定义、5 种样式预设
+- [x] matplotlib 图表：bar/hbar/line/pie/area/scatter/combo
+- [x] graphviz 流程图：多形状、多方向、彩色节点
 
 ### Phase 3 — 布局与模板
-- [ ] 页眉/页脚/分页/分节
-- [ ] 目录（TOC）
-- [ ] 自定义 .docx 模板支持
-- [ ] 图片插入（含标题）
-- [ ] callout 提示框
+- [x] 页眉/页脚/分页/分节
+- [x] 目录（TOC）
+- [ ] 自定义 .docx 模板支持（保留为扩展项）
+- [x] 图片插入（含标题）
+- [x] callout 提示框
+
+### Phase 3.5 — 导出与演示（可选能力）
+- [x] DOCX -> HTML/PDF（pandoc）
+- [x] Streamlit Web 示例（演示与预览）
 
 ### Phase 4 — Schema + CLI
-- [ ] JSON Schema 解析器
-- [ ] click CLI 实现
-- [ ] 主题预览命令
+- [x] JSON Schema 解析器
+- [x] click CLI 实现
+- [x] 主题预览命令
 
 ### Phase 5 — 示例与测试
-- [ ] 5 个完整示例文件
-- [ ] 单元测试覆盖核心逻辑
-- [ ] README 完善
+- [x] 5 个完整示例文件
+- [x] 单元测试覆盖核心逻辑
+- [x] README 完善
 
 ---
 
@@ -341,6 +356,9 @@ matplotlib / graphviz 渲染为临时 PNG，通过 python-docx 的 `add_picture(
 
 ### 2. graphviz 可选
 `graphviz` 系统二进制是可选依赖。若不存在，调用 `add_flowchart()` 时抛出带安装指引的 `EpicDocDependencyError`，其余功能不受影响。
+
+### 2.1 pandoc 可选
+`pandoc` 是可选系统依赖。若不存在，导出 HTML/PDF 会抛出带安装指引的 `ImportError`，DOCX 主流程不受影响。
 
 ### 3. 主题与模板的关系
 - 使用内置主题时：从空白 Document 创建，通过修改 docx styles 应用主题

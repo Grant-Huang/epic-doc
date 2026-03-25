@@ -10,6 +10,7 @@ from docx.shared import Pt, RGBColor
 
 if TYPE_CHECKING:
     from docx.document import Document
+
     from epic_doc.styles.theme import Theme
 
 
@@ -177,7 +178,7 @@ def add_toc(
     title_para.paragraph_format.space_after = Pt(theme.h2_space_after)
 
     # TOC field
-    add_toc_field(doc)
+    add_toc_field(doc, depth=depth)
     doc.add_paragraph()  # spacer
 
 

@@ -1,7 +1,7 @@
 """Complex table element with merging, shading, borders, and preset styles."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt, RGBColor
@@ -16,6 +16,7 @@ from epic_doc.utils.xml_helpers import (
 
 if TYPE_CHECKING:
     from docx.document import Document
+
     from epic_doc.styles.theme import Theme
 
 # Table style presets

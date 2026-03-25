@@ -14,6 +14,8 @@
 - **callout 提示框** — info / warning / danger / success 四种
 - **完整布局控制** — 页眉、页脚、目录、分页、分节
 - **JSON/CLI 驱动** — 支持配置文件生成，适合批量场景
+- **DOCX -> HTML/PDF** — 通过 pandoc 导出预览与分发版本
+- **Web 样例（Streamlit）** — 可视化编辑 JSON 并在线生成文档
 - **to_bytes()** — 适配 FastAPI / Flask / Django HTTP 响应
 
 ## 安装
@@ -29,6 +31,15 @@ pip install epic-doc
 brew install graphviz
 # Ubuntu/Debian
 sudo apt install graphviz
+```
+
+生成 PDF/HTML 还需要系统安装 `pandoc`：
+
+```bash
+# macOS
+brew install pandoc
+# Ubuntu/Debian
+sudo apt install pandoc
 ```
 
 ## 快速开始
@@ -106,6 +117,9 @@ doc.save("report.docx")
 # 从 JSON 生成文档
 epic-doc generate config.json -o output.docx
 
+# 同时导出 HTML / PDF（需要 pandoc）
+epic-doc generate config.json -o output.docx --also-html --also-pdf
+
 # 验证配置
 epic-doc validate config.json
 
@@ -142,6 +156,8 @@ epic-doc schema
 | `set_metadata(title, author, subject, description)` | 文档属性 |
 | `save(path)` | 保存文件 |
 | `to_bytes()` | 返回 bytes |
+| `to_html_bytes()` | 返回 HTML bytes（pandoc） |
+| `to_pdf_bytes()` | 返回 PDF bytes（pandoc） |
 
 ## 集成示例
 
@@ -162,6 +178,17 @@ def report():
         headers={"Content-Disposition": "attachment; filename=report.docx"},
     )
 ```
+
+## Web 样例（Streamlit）
+
+```bash
+pip install streamlit
+streamlit run web/streamlit_app.py
+```
+
+首次使用需要安装 `pandoc`（用于 HTML 预览与 PDF 导出）。
+
+界面内提供“帮助文档”页签，可直接渲染显示 `docs/*.md`。
 
 ## 开发
 

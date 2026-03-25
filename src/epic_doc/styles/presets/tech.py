@@ -4,7 +4,10 @@ from epic_doc.styles.theme import CalloutColors, Theme, register_theme
 TECH = register_theme(Theme(
     name="tech",
     display_name="极客深空 Tech",
-    description="深邃的暗色调配以科技感的青蓝荧光，赛博美学风格。适用于 IT 架构文档、技术报告、DevOps 文档。",
+    description=(
+        "深邃的暗色调配以科技感的青蓝荧光，赛博美学风格。"
+        "适用于 IT 架构文档、技术报告、DevOps 文档。"
+    ),
 
     heading_font="Calibri",
     body_font="Calibri",

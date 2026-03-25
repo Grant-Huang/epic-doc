@@ -1,11 +1,11 @@
 """Chart element — renders matplotlib charts as PNG images embedded in DOCX."""
 from __future__ import annotations
 
-import io
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 if TYPE_CHECKING:
     from docx.document import Document
+
     from epic_doc.styles.theme import Theme
     from epic_doc.utils.tempfiles import TempFileManager
 
@@ -88,7 +88,6 @@ def add_chart(
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
-        import matplotlib.ticker as mticker
     except ImportError as exc:
         raise ImportError(
             "matplotlib is required for add_chart(). "
@@ -168,7 +167,7 @@ def _render_bar(ax, data, palette, show_values, show_grid, multiseries):
         x = np.arange(len(labels))
         w = 0.8 / len(series_names)
         for i, (sname, sdata) in enumerate(data.items()):
-            vals = [sdata.get(l, 0) for l in labels]
+            vals = [sdata.get(label, 0) for label in labels]
             bars = ax.bar(x + i * w - 0.4 + w / 2, vals, w,
                           label=sname, color=palette[i % len(palette)], alpha=0.85)
             if show_values:
@@ -189,13 +188,12 @@ def _render_bar(ax, data, palette, show_values, show_grid, multiseries):
 
 def _render_hbar(ax, data, palette, show_values, show_grid, multiseries):
     if multiseries:
-        import numpy as np
         series_names = list(data.keys())
         labels = list(next(iter(data.values())).keys())
         y = list(range(len(labels)))
         h = 0.8 / len(series_names)
         for i, (sname, sdata) in enumerate(data.items()):
-            vals = [sdata.get(l, 0) for l in labels]
+            vals = [sdata.get(label, 0) for label in labels]
             bars = ax.barh(
                 [yi + i * h - 0.4 + h / 2 for yi in y],
                 vals, h, label=sname,
@@ -292,13 +290,13 @@ def _render_combo(ax, data, palette, show_grid):
     x = np.arange(len(labels))
 
     # First series → bar
-    bar_vals = [float(series[0][1].get(l, 0)) for l in labels]
+    bar_vals = [float(series[0][1].get(label, 0)) for label in labels]
     ax.bar(x, bar_vals, color=palette[0], alpha=0.7, label=series[0][0])
 
     # Remaining → line
     ax2 = ax.twinx()
     for i, (sname, sdata) in enumerate(series[1:], start=1):
-        vals = [float(sdata.get(l, 0)) for l in labels]
+        vals = [float(sdata.get(label, 0)) for label in labels]
         ax2.plot(x, vals, marker="o", linewidth=2, markersize=4,
                  color=palette[i % len(palette)], label=sname)
 

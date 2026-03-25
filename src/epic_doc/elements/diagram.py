@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 if TYPE_CHECKING:
     from docx.document import Document
+
     from epic_doc.styles.theme import Theme
     from epic_doc.utils.tempfiles import TempFileManager
 
@@ -62,8 +63,6 @@ def add_flowchart(
     # ── Nodes ────────────────────────────────────────────────────────────────
     primary_hex   = theme.primary
     accent_hex    = theme.accent
-    header_text   = theme.table_header_text
-
     _SHAPE_MAP = {
         "oval":         "ellipse",
         "box":          "box",
@@ -131,7 +130,6 @@ def add_flowchart(
         )
 
     # ── Render ───────────────────────────────────────────────────────────────
-    import os
     tmp_path = tmgr.new_png()
     # graphviz renders to <path> (without extension) when we call render
     base_path = tmp_path.replace(".png", "_gv")

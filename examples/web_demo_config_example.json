@@ -1,0 +1,49 @@
+{
+  "theme": "minimal",
+  "meta": {
+    "title": "epic-doc Web 演示",
+    "author": "epic-doc Demo"
+  },
+  "header": { "text": "epic-doc  Web 演示", "align": "right" },
+  "footer": { "text": "epic-doc", "page_number": true, "align": "center" },
+  "blocks": [
+    { "type": "heading", "text": "epic-doc Web 演示文档", "level": 1 },
+    {
+      "type": "paragraph",
+      "text": "这是一个 Streamlit 网页样例：你可以在页面中修改 JSON 配置，然后一键生成 DOCX，同时通过 pandoc 预览 HTML 并导出 PDF。",
+      "align": "justify"
+    },
+    { "type": "callout", "text": "当前默认示例不包含流程图（避免额外依赖）。", "style": "info", "title": "说明" },
+    {
+      "type": "table",
+      "data": [
+        ["字段", "值"],
+        ["主题", "minimal"],
+        ["导出格式", "DOCX + HTML + PDF"],
+        ["图表", "matplotlib"],
+        ["目录", "可选"]
+      ],
+      "headers": true,
+      "style": "striped",
+      "col_widths": [1.8, 4.2],
+      "caption": "表 1：Web 演示基础信息"
+    },
+    {
+      "type": "chart",
+      "chart_type": "bar",
+      "data": { "Q1": 120, "Q2": 180, "Q3": 150, "Q4": 230 },
+      "title": "季度柱状图示例",
+      "ylabel": "数值",
+      "caption": "图 1：bar chart（matplotlib -> PNG -> DOCX）",
+      "show_values": true,
+      "show_grid": true
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "code": "from epic_doc import EpicDoc\\n\\ndoc = EpicDoc(theme='minimal')\\ndoc.add_heading('Hello', level=1)\\n"
+    },
+    { "type": "hr" }
+  ]
+}
+

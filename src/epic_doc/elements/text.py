@@ -4,14 +4,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Optional, Union
 
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml import OxmlElement
-from docx.oxml.ns import qn
 from docx.shared import Pt, RGBColor
 
 from epic_doc.utils.xml_helpers import add_paragraph_border_bottom, make_hyperlink
 
 if TYPE_CHECKING:
     from docx.document import Document
+
     from epic_doc.styles.theme import Theme
 
 _ALIGN_MAP = {

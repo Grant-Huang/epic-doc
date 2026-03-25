@@ -360,6 +360,51 @@ class EpicDoc:
         finally:
             self._tmgr.cleanup()
 
+    def to_html_bytes(
+        self,
+        *,
+        title: Optional[str] = None,
+        pandoc_path: str = "pandoc",
+        extra_args: Optional[List[str]] = None,
+    ) -> bytes:
+        """Convert this document to standalone HTML bytes via pandoc."""
+        # Generate DOCX bytes first; this also cleans any internal temp images.
+        docx_bytes = self.to_bytes()
+
+        # Best-effort: use core doc title when not explicitly provided.
+        if title is None:
+            try:
+                title = self._doc.core_properties.title
+            except Exception:
+                title = None
+
+        from epic_doc.converters.pandoc import docx_bytes_to_html_bytes
+
+        return docx_bytes_to_html_bytes(
+            docx_bytes,
+            title=title,
+            pandoc_path=pandoc_path,
+            extra_args=extra_args,
+        )
+
+    def to_pdf_bytes(
+        self,
+        *,
+        pandoc_path: str = "pandoc",
+        extra_args: Optional[List[str]] = None,
+    ) -> bytes:
+        """Convert this document to PDF bytes via pandoc."""
+        # Generate DOCX bytes first; this also cleans any internal temp images.
+        docx_bytes = self.to_bytes()
+
+        from epic_doc.converters.pandoc import docx_bytes_to_pdf_bytes
+
+        return docx_bytes_to_pdf_bytes(
+            docx_bytes,
+            pandoc_path=pandoc_path,
+            extra_args=extra_args,
+        )
+
     # ── Context manager support ───────────────────────────────────────────────
 
     def __enter__(self) -> "EpicDoc":

@@ -1,5 +1,4 @@
 """Tests for EpicDoc builder core functionality."""
-import io
 import pytest
 
 from epic_doc import EpicDoc
@@ -21,7 +20,6 @@ def test_epicdoc_repr():
 
 
 def test_epicdoc_invalid_theme():
-    from epic_doc.styles.theme import Theme
     with pytest.raises(ValueError):
         EpicDoc(theme="nonexistent_theme_xyz")
 

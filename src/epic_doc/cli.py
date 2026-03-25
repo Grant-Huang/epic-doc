@@ -21,7 +21,15 @@ def main() -> None:
 @click.argument("config", type=click.Path(exists=True, dir_okay=False))
 @click.option("-o", "--output", default=None, help="Output .docx file path.")
 @click.option("--theme", default=None, help="Override the theme in the config.")
-def generate(config: str, output: Optional[str], theme: Optional[str]) -> None:
+@click.option("--also-pdf", is_flag=True, help="Also generate output PDF via pandoc.")
+@click.option("--also-html", is_flag=True, help="Also generate output HTML via pandoc.")
+def generate(
+    config: str,
+    output: Optional[str],
+    theme: Optional[str],
+    also_pdf: bool,
+    also_html: bool,
+) -> None:
     """Generate a DOCX document from a JSON config file.
 
     \b
@@ -41,12 +49,24 @@ def generate(config: str, output: Optional[str], theme: Optional[str]) -> None:
     if theme:
         definition["theme"] = theme
 
-    out_path = output or cfg_path.with_suffix(".docx").name
+    out_path = Path(output or cfg_path.with_suffix(".docx").name)
 
     try:
         doc = build_from_dict(definition)
-        doc.save(out_path)
+        doc.save(str(out_path))
         click.echo(f"[ok] Saved → {out_path}")
+
+        if also_pdf:
+            pdf_bytes = doc.to_pdf_bytes()
+            pdf_path = out_path.with_suffix(".pdf")
+            pdf_path.write_bytes(pdf_bytes)
+            click.echo(f"[ok] Saved → {pdf_path}")
+
+        if also_html:
+            html_bytes = doc.to_html_bytes()
+            html_path = out_path.with_suffix(".html")
+            html_path.write_bytes(html_bytes)
+            click.echo(f"[ok] Saved → {html_path}")
     except Exception as exc:
         click.echo(f"[error] {exc}", err=True)
         sys.exit(1)
@@ -61,7 +81,6 @@ def validate(config: str) -> None:
     Example:
         epic-doc validate report.json
     """
-    from epic_doc.schema import _process_block, build_from_dict
 
     cfg_path = Path(config)
     try:
@@ -254,7 +273,9 @@ def _generate_preview(theme_name: str, out_path: str) -> None:
     doc.add_paragraph("四级标题适合最细粒度的内容分层。")
 
     doc.add_heading("列表", level=2)
-    doc.add_list(["无序列表项目一", "无序列表项目二", ["嵌套子项目A", "嵌套子项目B"], "无序列表项目三"])
+    doc.add_list(
+        ["无序列表项目一", "无序列表项目二", ["嵌套子项目A", "嵌套子项目B"], "无序列表项目三"]
+    )
     doc.add_list(["步骤一：准备工作", "步骤二：执行操作", "步骤三：验证结果"], style="numbered")
 
     doc.add_heading("代码块", level=2)

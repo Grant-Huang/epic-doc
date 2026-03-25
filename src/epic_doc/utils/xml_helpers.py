@@ -1,4 +1,7 @@
 """Low-level python-docx XML helpers."""
+
+# ruff: noqa: UP045
+
 from __future__ import annotations
 
 from typing import Optional
@@ -159,8 +162,15 @@ def make_hyperlink(paragraph, text: str, url: str, color: str = "2563EB") -> Non
     paragraph._p.append(hyperlink)
 
 
-def add_toc_field(document) -> None:
-    """Insert a TOC field instruction into the document."""
+def add_toc_field(document, depth: int = 3) -> None:
+    """Insert a TOC field instruction into the document.
+
+    Note: TOC depth is controlled via the TOC field instruction:
+    ``TOC \\o "1-{depth}"``.
+    """
+    depth = int(depth)
+    # Word 的目录级别通常是 1-9，这里做一个保守夹取。
+    depth = max(1, min(depth, 9))
     paragraph = document.add_paragraph()
     p = paragraph._p
 
@@ -174,7 +184,7 @@ def add_toc_field(document) -> None:
     fldChar_begin.set(qn("w:fldCharType"), "begin")
 
     instrText = OxmlElement("w:instrText")
-    instrText.text = ' TOC \\o "1-3" \\h \\z \\u '
+    instrText.text = f' TOC \\o "1-{depth}" \\h \\z \\u '
     instrText.set("{http://www.w3.org/XML/1998/namespace}space", "preserve")
 
     fldChar_sep = OxmlElement("w:fldChar")

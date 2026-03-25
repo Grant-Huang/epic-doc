@@ -163,7 +163,6 @@ def test_chart_all_themes():
 
 def test_temp_files_cleaned_after_save(tmp_path):
     import os
-    import tempfile
 
     doc = _doc()
     doc.add_chart(chart_type="bar", data=SINGLE)

@@ -4,7 +4,6 @@ import pytest
 from epic_doc.styles import get_theme, list_themes
 from epic_doc.styles.theme import Theme
 
-
 EXPECTED_THEMES = [
     "professional", "minimal", "ocean", "forest", "sunset",
     "elegant", "tech", "academic", "cherry", "nordic", "ruby",
@@ -34,7 +33,7 @@ def test_get_theme_unknown_raises():
 
 def test_all_themes_have_required_fields():
     for theme in list_themes():
-        assert theme.name, f"Theme missing name"
+        assert theme.name, "Theme missing name"
         assert theme.display_name, f"Theme '{theme.name}' missing display_name"
         assert theme.description, f"Theme '{theme.name}' missing description"
         assert theme.primary, f"Theme '{theme.name}' missing primary color"

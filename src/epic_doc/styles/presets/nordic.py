@@ -4,7 +4,10 @@ from epic_doc.styles.theme import CalloutColors, Theme, register_theme
 NORDIC = register_theme(Theme(
     name="nordic",
     display_name="北欧简约 Nordic",
-    description="斯堪的纳维亚风格的冰蓝雪白，清冷却温暖。适用于产品白皮书、UX 报告、SaaS 产品文档。",
+    description=(
+        "斯堪的纳维亚风格的冰蓝雪白，清冷却温暖。"
+        "适用于产品白皮书、UX 报告、SaaS 产品文档。"
+    ),
 
     heading_font="Arial",
     body_font="Arial",

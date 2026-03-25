@@ -1,8 +1,5 @@
 """Tests for the table element."""
-import pytest
-
 from epic_doc import EpicDoc
-
 
 SAMPLE_DATA = [
     ["Name", "Q1", "Q2", "Q3"],

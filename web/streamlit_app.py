@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 # Make sure `epic_doc` can be imported when running from repo root:
 #   streamlit run web/streamlit_app.py
@@ -167,7 +168,8 @@ if "generate" in locals() and generate:
             html_bytes = docx_bytes_to_html_bytes(docx_bytes, title=title)
             html_str = html_bytes.decode("utf-8", errors="ignore")
         out_html.subheader("HTML 预览（pandoc）")
-        out_html.components.v1.html(html_str, height=900, scrolling=True)
+        with out_html:
+            components.html(html_str, height=900, scrolling=True)
     except ImportError as exc:
         st.warning(str(exc))
     except RuntimeError as exc:

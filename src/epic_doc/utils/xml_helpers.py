@@ -100,6 +100,54 @@ def set_table_no_borders(table) -> None:
     tblPr.append(tblBorders)
 
 
+def _twips_from_inches(inches: float) -> int:
+    # 1 inch = 1440 twips
+    return int(round(float(inches) * 1440))
+
+
+def set_table_column_widths(table, widths_in: list[float]) -> None:
+    """Set table column widths robustly (tblGrid + tcW).
+
+    python-docx's high-level width assignment is often overridden by Word's autofit.
+    This helper writes OOXML widths so col_widths is much more likely to stick.
+    """
+    tbl = table._tbl
+
+    # --- tblGrid ---
+    grid = tbl.find(qn("w:tblGrid"))
+    if grid is None:
+        grid = OxmlElement("w:tblGrid")
+        # Insert after tblPr if present, otherwise prepend
+        tblPr = tbl.find(qn("w:tblPr"))
+        if tblPr is not None:
+            tbl.insert(1, grid)
+        else:
+            tbl.insert(0, grid)
+
+    # Clear existing gridCols
+    for child in list(grid):
+        grid.remove(child)
+
+    for w_in in widths_in:
+        gc = OxmlElement("w:gridCol")
+        gc.set(qn("w:w"), str(_twips_from_inches(w_in)))
+        grid.append(gc)
+
+    # --- tcW for each cell ---
+    for row in table.rows:
+        for idx, cell in enumerate(row.cells):
+            if idx >= len(widths_in):
+                break
+            tc = cell._tc
+            tcPr = tc.get_or_add_tcPr()
+            tcW = tcPr.find(qn("w:tcW"))
+            if tcW is None:
+                tcW = OxmlElement("w:tcW")
+                tcPr.append(tcW)
+            tcW.set(qn("w:type"), "dxa")
+            tcW.set(qn("w:w"), str(_twips_from_inches(widths_in[idx])))
+
+
 def add_paragraph_border_bottom(paragraph, color: str, size: str = "4") -> None:
     """Add a bottom border to a paragraph (used for H1 decorative line)."""
     pPr = paragraph._p.get_or_add_pPr()

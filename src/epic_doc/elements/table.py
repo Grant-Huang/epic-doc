@@ -4,13 +4,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Inches, Pt, RGBColor
+from docx.shared import Pt, RGBColor
 
 from epic_doc.utils.xml_helpers import (
     set_cell_bg,
     set_cell_borders,
     set_cell_vertical_alignment,
     set_table_borders,
+    set_table_column_widths,
     set_table_no_borders,
 )
 
@@ -89,6 +90,11 @@ def add_table(
 
     table = doc.add_table(rows=n_rows, cols=n_cols)
     table.style = "Table Grid"
+    # Prevent Word from auto-resizing columns and overriding widths.
+    try:
+        table.autofit = False
+    except Exception:
+        pass
 
     # --- Column widths ---
     total_width = 6.0  # inches, default content area
@@ -99,9 +105,8 @@ def add_table(
         w = total_width / n_cols
         widths = [w] * n_cols
 
-    for col_idx, width in enumerate(widths):
-        for row in table.rows:
-            row.cells[col_idx].width = Inches(width)
+    # Write widths via OOXML so Word is less likely to ignore them.
+    set_table_column_widths(table, widths)
 
     # --- Table alignment ---
     from docx.enum.table import WD_TABLE_ALIGNMENT

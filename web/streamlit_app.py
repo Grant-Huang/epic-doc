@@ -75,24 +75,75 @@ def _best_effort_title(defn: dict[str, Any]) -> Optional[str]:
 st.set_page_config(page_title="epic-doc 文档生成", layout="wide")
 st.title("epic-doc 文档生成与预览")
 
-tab_build, tab_docs = st.tabs(["生成/预览", "帮助文档"])
+st.markdown(
+    """
+<style>
+  /* Hide Streamlit toolbar + menu (best-effort; may change with Streamlit versions) */
+  [data-testid="stToolbar"] { display: none !important; }
+  #MainMenu { visibility: hidden; }
+  footer { visibility: hidden; }
+</style>
+""",
+    unsafe_allow_html=True,
+)
 
-with tab_docs:
+
+def _get_query_params() -> dict[str, str]:
+    try:
+        # New API (Streamlit >= 1.30)
+        qp = dict(st.query_params)
+        return {k: str(v) for k, v in qp.items()}
+    except Exception:
+        try:
+            qp = st.experimental_get_query_params()
+            return {k: (v[0] if isinstance(v, list) and v else str(v)) for k, v in qp.items()}
+        except Exception:
+            return {}
+
+
+def _set_query_params(**params: str) -> None:
+    try:
+        st.query_params.clear()
+        for k, v in params.items():
+            st.query_params[k] = v
+    except Exception:
+        st.experimental_set_query_params(**params)
+
+
+qp = _get_query_params()
+default_view = qp.get("view", "build")
+view = st.sidebar.radio(
+    "导航",
+    ["build", "docs"],
+    index=0 if default_view != "docs" else 1,
+    format_func=lambda x: "生成/预览" if x == "build" else "帮助文档",
+)
+if view != default_view:
+    # Keep doc selection if switching views.
+    doc = qp.get("doc", "index.md")
+    _set_query_params(view=view, doc=doc)
+
+if view == "docs":
     st.subheader("帮助文档")
     docs = _list_docs_md()
     if not docs:
         st.info("未找到 docs/*.md 文档。")
     else:
         names = [p.name for p in docs]
-        default_idx = names.index("index.md") if "index.md" in names else 0
+        default_doc = qp.get("doc", "index.md")
+        default_idx = names.index(default_doc) if default_doc in names else (
+            names.index("index.md") if "index.md" in names else 0
+        )
         selected = st.selectbox("选择文档", names, index=default_idx)
+        if selected != default_doc:
+            _set_query_params(view="docs", doc=selected)
         md_path = DOCS_DIR / selected
         try:
             st.markdown(_read_md(md_path))
         except Exception as exc:
             st.error(f"读取文档失败：{exc}")
 
-with tab_build:
+if view == "build":
     themes = list_themes()
     theme_names = [t.name for t in themes]
 
@@ -136,7 +187,7 @@ with tab_build:
         out_pdf = st.empty()
 
 
-if "generate" in locals() and generate:
+if view == "build" and "generate" in locals() and generate:
     try:
         definition = json.loads(json_text)
     except json.JSONDecodeError as exc:

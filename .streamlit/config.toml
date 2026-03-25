@@ -1,0 +1,5 @@
+[client]
+# Streamlit 默认会显示右上角工具栏/菜单（含 Deploy）。
+# 这里将其降到最简模式；若仍希望彻底隐藏，可配合 web/streamlit_app.py 中的 CSS。
+toolbarMode = "minimal"
+

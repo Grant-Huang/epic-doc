@@ -39,7 +39,7 @@
     {
       "type": "table",
       "headers": true,
-      "style": "minimal",
+      "style": "card",
       "col_widths": [1.6, 4.4],
       "font_size": 9,
       "data": [
@@ -87,30 +87,30 @@
 
     { "type": "heading", "text": "项目亮点（可复用经验）", "level": 2 },
     {
-      "type": "callout",
-      "style": "success",
-      "title": "追溯方案",
-      "text": "采用“批次码 + 条码枪扫描”替代 RFID，成本降低约 60%，客户接受度高。建议在其他有 IATF 追溯需求的客户优先推广此方案。"
-    },
-    {
-      "type": "callout",
-      "style": "info",
-      "title": "SPC 模块",
-      "text": "上线前先做 2 周数据收集期，用历史数据给客户演示控制图，显著提升对该模块价值的认同度。"
+      "type": "table",
+      "headers": true,
+      "style": "card",
+      "col_widths": [6.0],
+      "font_size": 9,
+      "data": [
+        ["项目亮点（卡片）"],
+        ["追溯方案：采用“批次码 + 条码枪扫描”替代 RFID，成本降低约 60%，客户接受度高。"],
+        ["SPC 模块：上线前先做 2 周数据收集期，用历史数据演示控制图，提升模块价值认同度。"]
+      ]
     },
 
     { "type": "heading", "text": "项目风险与教训", "level": 2 },
     {
-      "type": "callout",
-      "style": "warning",
-      "title": "SAP 接口评估",
-      "text": "SAP 接口联调低估工期约 2 倍：原以为走标准 BAPI，实际为高度定制化版本，需要重写 RFC 接口。后续项目建议在合同前置接口评估。"
-    },
-    {
-      "type": "callout",
-      "style": "danger",
-      "title": "需求变更",
-      "text": "客户 IT 部门在项目中途更换负责人，导致服务路径与计划重新规划，延期约 3 周。建议在合同中增加“环境变更的工期保护条款”。"
+      "type": "table",
+      "headers": true,
+      "style": "card",
+      "col_widths": [6.0],
+      "font_size": 9,
+      "data": [
+        ["项目风险与教训（卡片）"],
+        ["SAP 接口评估：联调低估工期约 2 倍；标准 BAPI 不可用，需重写 RFC。建议合同前置接口评估。"],
+        ["需求变更：中途更换负责人导致计划重排，延期约 3 周。建议增加环境变更的工期保护条款。"]
+      ]
     },
 
     { "type": "heading", "text": "适用搜索标签", "level": 2 },

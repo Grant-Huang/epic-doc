@@ -20,7 +20,7 @@ def test_basic_table():
 
 
 def test_table_styles():
-    for style in ("striped", "grid", "minimal", "bordered", "dark"):
+    for style in ("striped", "grid", "minimal", "bordered", "dark", "card"):
         doc = _make_doc()
         doc.add_table(data=SAMPLE_DATA, headers=True, style=style)
         data = doc.to_bytes()

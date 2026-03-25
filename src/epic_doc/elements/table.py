@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from epic_doc.styles.theme import Theme
 
 # Table style presets
-_STYLES = ("striped", "grid", "minimal", "bordered", "dark")
+_STYLES = ("striped", "grid", "minimal", "bordered", "dark", "card")
 
 _ALIGN_MAP = {
     "left": WD_ALIGN_PARAGRAPH.LEFT,
@@ -147,6 +147,15 @@ def add_table(
             for c_idx in range(n_cols):
                 cell = table.cell(r_idx, c_idx)
                 if r_idx % 2 == 0:
+                    set_cell_bg(cell, theme.table_stripe_bg)
+    elif style == "card":
+        # Card-like block: strong outer border, consistent light body background.
+        set_table_borders(table, color=theme.table_border, size="6")
+        for r_idx in range(n_rows):
+            for c_idx in range(n_cols):
+                cell = table.cell(r_idx, c_idx)
+                # Keep header row dark when headers=True; shade body rows uniformly.
+                if not (headers and r_idx == 0):
                     set_cell_bg(cell, theme.table_stripe_bg)
     elif style == "striped":
         set_table_borders(table, color=theme.table_border, size="4")

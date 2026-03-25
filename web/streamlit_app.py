@@ -51,6 +51,17 @@ def _load_default_json() -> str:
     return json.dumps({"theme": "minimal", "blocks": []}, ensure_ascii=False, indent=2)
 
 
+def _list_example_json() -> list[Path]:
+    examples_dir = ROOT / "examples"
+    if not examples_dir.exists():
+        return []
+    return sorted([p for p in examples_dir.glob("*.json") if p.is_file()], key=lambda p: p.name)
+
+
+def _read_text(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
 def _best_effort_title(defn: dict[str, Any]) -> Optional[str]:
     meta = defn.get("meta") or {}
     if isinstance(meta, dict):
@@ -93,11 +104,23 @@ with tab_build:
         )
         selected_theme = st.selectbox("Theme", theme_names, index=default_theme_idx)
 
-        st.subheader("2) 编辑 JSON 配置")
-        default_json = _load_default_json()
+        st.subheader("2) 选择示例模板（可选）")
+        examples = _list_example_json()
+        if examples:
+            ex_names = [p.name for p in examples]
+            default_ex = "web_demo_config_example.json"
+            default_ex_idx = ex_names.index(default_ex) if default_ex in ex_names else 0
+            selected_ex = st.selectbox("示例模板", ex_names, index=default_ex_idx)
+            if st.button("加载示例到编辑器"):
+                st.session_state["doc_json_text"] = _read_text(ROOT / "examples" / selected_ex)
+
+        st.subheader("3) 编辑 JSON 配置")
+        if "doc_json_text" not in st.session_state:
+            st.session_state["doc_json_text"] = _load_default_json()
         json_text = st.text_area(
             "DOC 定义（与 `epic-doc generate config.json` 等价）",
-            value=default_json,
+            key="doc_json_text",
+            value=st.session_state["doc_json_text"],
             height=520,
         )
 

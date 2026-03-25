@@ -161,7 +161,6 @@ def make_hyperlink(paragraph, text: str, url: str, color: str = "2563EB") -> Non
 
 def add_toc_field(document) -> None:
     """Insert a TOC field instruction into the document."""
-    from docx.oxml.ns import nsmap
     paragraph = document.add_paragraph()
     p = paragraph._p
 

@@ -14,6 +14,32 @@ if TYPE_CHECKING:
 DataType = Union[Dict[str, Any], Dict[str, Dict[str, Any]]]
 
 
+def _configure_cjk_font() -> None:
+    """Try to find and register a CJK-compatible font for matplotlib.
+
+    Falls back silently if no CJK font is available — charts still render,
+    but CJK characters may appear as boxes on font-limited systems.
+    """
+    try:
+        import matplotlib.font_manager as fm
+
+        # Preferred CJK fonts, in order
+        _CJK_CANDIDATES = [
+            "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans CN",
+            "WenQuanYi Micro Hei", "Droid Sans Fallback",
+            "PingFang SC", "Microsoft YaHei", "SimHei", "Arial Unicode MS",
+        ]
+        available = {f.name for f in fm.fontManager.ttflist}
+        for name in _CJK_CANDIDATES:
+            if name in available:
+                import matplotlib as mpl
+                mpl.rcParams["font.sans-serif"] = [name] + mpl.rcParams["font.sans-serif"]
+                mpl.rcParams["axes.unicode_minus"] = False
+                return
+    except Exception:
+        pass  # Never fail silently — chart rendering continues regardless
+
+
 def _is_multiseries(data: DataType) -> bool:
     return data and isinstance(next(iter(data.values())), dict)
 
@@ -68,6 +94,8 @@ def add_chart(
             "matplotlib is required for add_chart(). "
             "Install it with: pip install matplotlib"
         ) from exc
+
+    _configure_cjk_font()
 
     if data is None:
         data = {}

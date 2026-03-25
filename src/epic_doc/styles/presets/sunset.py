@@ -6,8 +6,8 @@ SUNSET = register_theme(Theme(
     display_name="暖橙日落 Sunset",
     description="日落时分的橙红渐变，热情而充满活力。适用于营销报告、创意提案、消费品行业分析。",
 
-    heading_font="Calibri",
-    body_font="Calibri",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
 
     h1_size=23,

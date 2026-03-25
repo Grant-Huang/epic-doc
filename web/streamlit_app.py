@@ -14,6 +14,7 @@ import streamlit.components.v1 as components
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 DOCS_DIR = ROOT / "docs"
+USER_THEMES_DIR = ROOT / "themes"
 try:
     from epic_doc import list_themes
     from epic_doc.converters.pandoc import (
@@ -21,6 +22,7 @@ try:
         docx_bytes_to_pdf_bytes,
     )
     from epic_doc.schema import build_from_dict
+    from epic_doc.styles.theme import Theme, register_theme
 except ModuleNotFoundError:
     sys.path.insert(0, str(SRC))
     from epic_doc import list_themes
@@ -29,6 +31,7 @@ except ModuleNotFoundError:
         docx_bytes_to_pdf_bytes,
     )
     from epic_doc.schema import build_from_dict
+    from epic_doc.styles.theme import Theme, register_theme
 
 
 def _list_docs_md() -> list[Path]:
@@ -63,6 +66,37 @@ def _read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def _theme_to_dict(theme: Theme) -> dict[str, Any]:
+    return theme.__dict__.copy()
+
+
+def _filter_theme_fields(data: dict[str, Any]) -> dict[str, Any]:
+    allowed = set(Theme.__dataclass_fields__.keys())
+    return {k: v for k, v in data.items() if k in allowed}
+
+
+def _list_user_theme_json() -> list[Path]:
+    if not USER_THEMES_DIR.exists():
+        return []
+    return sorted([p for p in USER_THEMES_DIR.glob("*.json") if p.is_file()], key=lambda p: p.name)
+
+
+def _load_user_themes() -> None:
+    # Best-effort: register all themes under themes/*.json
+    for p in _list_user_theme_json():
+        try:
+            raw = json.loads(p.read_text(encoding="utf-8"))
+            if not isinstance(raw, dict):
+                continue
+            payload = _filter_theme_fields(raw)
+            if not isinstance(payload.get("name"), str) or not payload["name"].strip():
+                continue
+            register_theme(Theme(**payload))
+        except Exception:
+            # Ignore broken user themes; keep app usable.
+            continue
+
+
 def _best_effort_title(defn: dict[str, Any]) -> Optional[str]:
     meta = defn.get("meta") or {}
     if isinstance(meta, dict):
@@ -74,6 +108,8 @@ def _best_effort_title(defn: dict[str, Any]) -> Optional[str]:
 
 st.set_page_config(page_title="epic-doc 文档生成", layout="wide")
 st.title("epic-doc 文档生成与预览")
+
+_load_user_themes()
 
 st.markdown(
     """
@@ -155,6 +191,191 @@ if view == "build":
             theme_names.index("professional") if "professional" in theme_names else 0
         )
         selected_theme = st.selectbox("Theme", theme_names, index=default_theme_idx)
+
+        st.subheader("主题设定（保存为新主题）")
+        with st.expander("打开主题编辑器", expanded=False):
+            base_theme_name = st.selectbox(
+                "基准主题",
+                theme_names,
+                index=theme_names.index(selected_theme) if selected_theme in theme_names else 0,
+                key="theme_editor_base",
+            )
+            base_theme = next((t for t in themes if t.name == base_theme_name), themes[0])
+            base_dict = _theme_to_dict(base_theme)
+
+            st.caption("字体（英文/中文/代码）")
+            col_f1, col_f2 = st.columns([1, 1])
+            with col_f1:
+                heading_ascii = st.text_input(
+                    "标题英文(ASCII)字体",
+                    value=str(base_dict.get("heading_font_ascii") or "Arial"),
+                )
+                body_ascii = st.text_input(
+                    "正文英文(ASCII)字体",
+                    value=str(base_dict.get("body_font_ascii") or "Arial"),
+                )
+                mono_ascii = st.text_input(
+                    "代码英文(ASCII)字体",
+                    value=str(base_dict.get("mono_font_ascii") or "Arial"),
+                )
+            with col_f2:
+                heading_cjk = st.text_input(
+                    "标题中文(CJK)字体",
+                    value=str(base_dict.get("heading_font_cjk") or "等线"),
+                )
+                body_cjk = st.text_input(
+                    "正文中文(CJK)字体",
+                    value=str(base_dict.get("body_font_cjk") or "等线"),
+                )
+                mono_cjk = st.text_input(
+                    "代码中文(CJK)字体",
+                    value=str(base_dict.get("mono_font_cjk") or "等线"),
+                )
+
+            st.caption("字号（pt）")
+            col_s1, col_s2, col_s3 = st.columns(3)
+            with col_s1:
+                h1_size = st.number_input(
+                    "H1",
+                    min_value=8,
+                    max_value=64,
+                    value=int(base_dict.get("h1_size", 22)),
+                )
+                h2_size = st.number_input(
+                    "H2",
+                    min_value=8,
+                    max_value=64,
+                    value=int(base_dict.get("h2_size", 16)),
+                )
+                h3_size = st.number_input(
+                    "H3",
+                    min_value=8,
+                    max_value=64,
+                    value=int(base_dict.get("h3_size", 13)),
+                )
+            with col_s2:
+                h4_size = st.number_input(
+                    "H4",
+                    min_value=8,
+                    max_value=64,
+                    value=int(base_dict.get("h4_size", 12)),
+                )
+                body_size = st.number_input(
+                    "正文",
+                    min_value=8,
+                    max_value=32,
+                    value=int(base_dict.get("body_size", 11)),
+                )
+                caption_size = st.number_input(
+                    "Caption",
+                    min_value=6,
+                    max_value=24,
+                    value=int(base_dict.get("caption_size", 9)),
+                )
+            with col_s3:
+                code_size = st.number_input(
+                    "代码",
+                    min_value=6,
+                    max_value=24,
+                    value=int(base_dict.get("code_size", 10)),
+                )
+
+            st.caption("颜色（hex，无 #）")
+            col_c1, col_c2 = st.columns([1, 1])
+            with col_c1:
+                primary = st.text_input(
+                    "primary(H1)",
+                    value=str(base_dict.get("primary", "1E3A5F")),
+                )
+                secondary = st.text_input(
+                    "secondary(H2)",
+                    value=str(base_dict.get("secondary", "2563EB")),
+                )
+                accent = st.text_input(
+                    "accent(H3/链接)",
+                    value=str(base_dict.get("accent", "0EA5E9")),
+                )
+                body_text = st.text_input(
+                    "body_text",
+                    value=str(base_dict.get("body_text", "1F2937")),
+                )
+                light_text = st.text_input(
+                    "light_text",
+                    value=str(base_dict.get("light_text", "6B7280")),
+                )
+            with col_c2:
+                table_header_bg = st.text_input(
+                    "table_header_bg",
+                    value=str(base_dict.get("table_header_bg", "1E3A5F")),
+                )
+                table_header_text = st.text_input(
+                    "table_header_text",
+                    value=str(base_dict.get("table_header_text", "FFFFFF")),
+                )
+                table_stripe_bg = st.text_input(
+                    "table_stripe_bg",
+                    value=str(base_dict.get("table_stripe_bg", "EFF6FF")),
+                )
+                table_border = st.text_input(
+                    "table_border",
+                    value=str(base_dict.get("table_border", "BFDBFE")),
+                )
+
+            st.caption("保存")
+            new_name = st.text_input(
+                "新主题 ID（name）",
+                value=f"{base_theme.name}_custom",
+            )
+            new_display_name = st.text_input(
+                "显示名（display_name）",
+                value=f"{base_theme.display_name}（自定义）",
+            )
+            new_desc = st.text_input(
+                "描述（description）",
+                value="User customized theme.",
+            )
+
+            if st.button("保存主题到 themes/*.json 并立即启用"):
+                USER_THEMES_DIR.mkdir(parents=True, exist_ok=True)
+                payload = _filter_theme_fields({
+                    **base_dict,
+                    "name": new_name.strip(),
+                    "display_name": new_display_name.strip(),
+                    "description": new_desc.strip(),
+                    "heading_font_ascii": heading_ascii.strip(),
+                    "body_font_ascii": body_ascii.strip(),
+                    "mono_font_ascii": mono_ascii.strip(),
+                    "heading_font_cjk": heading_cjk.strip(),
+                    "body_font_cjk": body_cjk.strip(),
+                    "mono_font_cjk": mono_cjk.strip(),
+                    "h1_size": int(h1_size),
+                    "h2_size": int(h2_size),
+                    "h3_size": int(h3_size),
+                    "h4_size": int(h4_size),
+                    "body_size": int(body_size),
+                    "caption_size": int(caption_size),
+                    "code_size": int(code_size),
+                    "primary": primary.strip(),
+                    "secondary": secondary.strip(),
+                    "accent": accent.strip(),
+                    "body_text": body_text.strip(),
+                    "light_text": light_text.strip(),
+                    "table_header_bg": table_header_bg.strip(),
+                    "table_header_text": table_header_text.strip(),
+                    "table_stripe_bg": table_stripe_bg.strip(),
+                    "table_border": table_border.strip(),
+                })
+                if not payload.get("name"):
+                    st.error("新主题 ID 不能为空。")
+                else:
+                    out_path = USER_THEMES_DIR / f"{payload['name']}.json"
+                    out_path.write_text(
+                        json.dumps(payload, ensure_ascii=False, indent=2),
+                        encoding="utf-8",
+                    )
+                    register_theme(Theme(**payload))
+                    st.success(f"已保存并启用：{out_path.name}")
+                    st.rerun()
 
         st.subheader("2) 选择示例模板（可选）")
         examples = _list_example_json()

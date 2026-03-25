@@ -27,9 +27,21 @@ class Theme:
     description: str = "Clean and professional theme."
 
     # ── Typography ────────────────────────────────────────────────────────────
-    heading_font: str = "Calibri"
-    body_font: str = "Calibri"
-    mono_font: str = "Courier New"
+    # Legacy single-font fields (kept for backward compatibility). New code
+    # should prefer the *_font_ascii / *_font_cjk fields below.
+    heading_font: str = "Arial"
+    body_font: str = "Arial"
+    mono_font: str = "Consolas"
+
+    # Explicit per-script fonts (used when writing OOXML w:rFonts).
+    # - ascii/hAnsi: English/Latin
+    # - eastAsia: CJK
+    heading_font_ascii: Optional[str] = None
+    body_font_ascii: Optional[str] = None
+    mono_font_ascii: Optional[str] = None
+    heading_font_cjk: Optional[str] = None
+    body_font_cjk: Optional[str] = None
+    mono_font_cjk: Optional[str] = None
 
     # Font sizes in points
     h1_size: int = 22
@@ -102,6 +114,18 @@ class Theme:
     @property
     def h1_border_hex(self) -> str:
         return self.h1_border_color or self.accent
+
+    def __post_init__(self) -> None:
+        # Backfill new font fields from legacy ones when not provided.
+        self.heading_font_ascii = self.heading_font_ascii or self.heading_font
+        self.body_font_ascii = self.body_font_ascii or self.body_font
+        # Requirement: English should default to Arial globally (including code blocks)
+        # unless a theme explicitly overrides mono_font_ascii.
+        self.mono_font_ascii = self.mono_font_ascii or "Arial"
+
+        self.heading_font_cjk = self.heading_font_cjk or "等线"
+        self.body_font_cjk = self.body_font_cjk or "等线"
+        self.mono_font_cjk = self.mono_font_cjk or "等线"
 
 
 # ── Registry ─────────────────────────────────────────────────────────────────

@@ -6,8 +6,8 @@ RUBY = register_theme(Theme(
     display_name="宝石红金 Ruby",
     description="深红与暗金色调的权威组合，尊贵且富有力量感。适用于法律合规文档、金融年报、政府报告。",
 
-    heading_font="Times New Roman",
-    body_font="Calibri",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
 
     h1_size=22,

@@ -10,6 +10,37 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
 
+def set_run_fonts(
+    run,
+    *,
+    ascii_font: str,
+    cjk_font: str,
+    hansi_font: Optional[str] = None,
+) -> None:
+    """Set a run's font for both Latin and CJK scripts via OOXML.
+
+    Word uses w:rFonts to pick fonts by script. Setting only run.font.name is
+    often insufficient for CJK (eastAsia).
+    """
+    hansi_font = hansi_font or ascii_font
+    try:
+        run.font.name = ascii_font
+    except Exception:
+        pass
+
+    r = run._r
+    rPr = r.get_or_add_rPr()
+    rFonts = rPr.find(qn("w:rFonts"))
+    if rFonts is None:
+        rFonts = OxmlElement("w:rFonts")
+        rPr.insert(0, rFonts)
+
+    rFonts.set(qn("w:ascii"), ascii_font)
+    rFonts.set(qn("w:hAnsi"), hansi_font)
+    rFonts.set(qn("w:cs"), ascii_font)
+    rFonts.set(qn("w:eastAsia"), cjk_font)
+
+
 def set_cell_bg(cell, hex_color: str) -> None:
     """Set a table cell's background/shading color (hex without #)."""
     tc = cell._tc

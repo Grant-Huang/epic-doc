@@ -9,8 +9,8 @@ TECH = register_theme(Theme(
         "适用于 IT 架构文档、技术报告、DevOps 文档。"
     ),
 
-    heading_font="Calibri",
-    body_font="Calibri",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Consolas",
 
     h1_size=22,

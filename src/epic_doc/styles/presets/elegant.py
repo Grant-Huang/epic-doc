@@ -6,8 +6,8 @@ ELEGANT = register_theme(Theme(
     display_name="优雅紫金 Elegant",
     description="深紫与金色的奢华搭配，高贵典雅。适用于高端商业提案、奢侈品牌报告、VIP 客户文档。",
 
-    heading_font="Times New Roman",
-    body_font="Times New Roman",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
 
     h1_size=24,

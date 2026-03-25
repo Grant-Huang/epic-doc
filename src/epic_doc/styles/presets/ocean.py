@@ -6,8 +6,8 @@ OCEAN = register_theme(Theme(
     display_name="海洋深邃 Ocean",
     description="深邃的蓝绿色系，层次感强。适用于科研报告、数据分析报告、金融报告。",
 
-    heading_font="Calibri",
-    body_font="Calibri",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
 
     h1_size=22,

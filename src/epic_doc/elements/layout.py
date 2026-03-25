@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
     from epic_doc.styles.theme import Theme
 
+from epic_doc.utils.xml_helpers import set_run_fonts
+
 
 def _rgb(h: str) -> RGBColor:
     h = h.lstrip("#")
@@ -63,7 +65,11 @@ def set_header(
         run.text = ""
 
     run = para.add_run(text)
-    run.font.name = theme.body_font
+    set_run_fonts(
+        run,
+        ascii_font=theme.body_font_ascii,
+        cjk_font=theme.body_font_cjk,
+    )
     run.font.size = Pt(theme.caption_size)
     run.font.color.rgb = _rgb(theme.light_text)
 
@@ -106,7 +112,11 @@ def set_footer(
 
     def _styled_run(t: str) -> None:
         r = para.add_run(t)
-        r.font.name = theme.body_font
+        set_run_fonts(
+            r,
+            ascii_font=theme.body_font_ascii,
+            cjk_font=theme.body_font_cjk,
+        )
         r.font.size = Pt(theme.caption_size)
         r.font.color.rgb = _rgb(theme.light_text)
 
@@ -138,7 +148,11 @@ def set_footer(
 def _insert_page_number(paragraph, theme: "Theme") -> None:
     """Insert a PAGE field run into a paragraph."""
     run = paragraph.add_run()
-    run.font.name = theme.body_font
+    set_run_fonts(
+        run,
+        ascii_font=theme.body_font_ascii,
+        cjk_font=theme.body_font_cjk,
+    )
     run.font.size = Pt(theme.caption_size)
     run.font.color.rgb = _rgb(theme.light_text)
 
@@ -170,7 +184,11 @@ def add_toc(
     title_para = doc.add_paragraph()
     title_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
     run = title_para.add_run(title)
-    run.font.name = theme.heading_font
+    set_run_fonts(
+        run,
+        ascii_font=theme.heading_font_ascii,
+        cjk_font=theme.heading_font_cjk,
+    )
     run.font.size = Pt(theme.h2_size)
     run.font.bold = True
     run.font.color.rgb = _rgb(theme.primary)

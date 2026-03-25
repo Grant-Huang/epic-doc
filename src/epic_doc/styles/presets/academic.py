@@ -6,8 +6,8 @@ ACADEMIC = register_theme(Theme(
     display_name="学术棕米 Academic",
     description="温暖的棕色与米色基调，庄重而不失温度。适用于学术论文、研究报告、白皮书、行业调研。",
 
-    heading_font="Times New Roman",
-    body_font="Times New Roman",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
 
     h1_size=20,

@@ -6,9 +6,12 @@ PROFESSIONAL = register_theme(Theme(
     display_name="商务深蓝 Professional",
     description="经典深海蓝配色，适用于企业年报、商业提案、投资分析等正式场合。",
 
-    heading_font="Calibri",
-    body_font="Calibri",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
+    heading_font_cjk="楷体",
+    body_font_cjk="楷体",
+    mono_font_cjk="楷体",
 
     h1_size=22,
     h2_size=16,

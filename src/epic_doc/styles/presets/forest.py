@@ -6,8 +6,8 @@ FOREST = register_theme(Theme(
     display_name="自然绿意 Forest",
     description="自然森林的绿色层次，沉稳而充满生命力。适用于环保报告、可持续发展年报、农业/林业报告。",
 
-    heading_font="Georgia",
-    body_font="Georgia",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
 
     h1_size=22,

@@ -1,0 +1,176 @@
+{
+  "theme": "professional",
+  "meta": {
+    "title": "项目调研报告（复刻结构示例）",
+    "author": "epic-doc Demo",
+    "subject": "Case Study",
+    "description": "尽可能复刻“卡片+分区”的文档结构（在 DOCX 能力边界内用卡片表格近似）。"
+  },
+  "header": { "text": "项目调研报告（复刻结构示例）", "align": "right" },
+  "footer": { "text": "epic-doc", "page_number": true, "align": "center" },
+  "blocks": [
+    { "type": "heading", "text": "奥托精密零部件（苏州）有限公司", "level": 1 },
+    {
+      "type": "paragraph",
+      "text": "项目编号：MES-2022-SZ-017 · 2022年3月—2022年11月 · 版本：V1.0",
+      "align": "left",
+      "font_size": 10
+    },
+    {
+      "type": "table",
+      "headers": false,
+      "style": "card",
+      "col_widths": [2.0, 4.0],
+      "font_size": 9,
+      "data": [
+        ["一句话结论", "该项目已上线，交付稳定；核心价值集中在“追溯闭环 + 排程可解释 + 质量 SPC”。"],
+        ["适用标签", "#汽车零部件  #IATF追溯  #SPC质量  #SAP集成  #OPC-UA  #条码追溯方案"]
+      ],
+      "caption": "摘要卡片（复刻：顶部大卡片）"
+    },
+    {
+      "type": "table",
+      "headers": false,
+      "style": "grid",
+      "col_widths": [1.3, 2.6, 1.3, 2.0],
+      "font_size": 9,
+      "data": [
+        ["行业", "汽车零部件", "客户规模", "2个工厂 / 1200人"],
+        ["实施工期", "8个月", "合同金额", "380万元"],
+        ["交付范围", "MES 核心模块 + 报表中心", "集成系统", "SAP ECC / 自研 WMS / OPC-UA"]
+      ],
+      "caption": "概览信息（复刻：2×2+ 扩展网格）"
+    },
+    { "type": "hr" },
+
+    { "type": "heading", "text": "核心需求模块（模拟 Tab 区）", "level": 2 },
+    {
+      "type": "paragraph",
+      "text": "工单管理  |  生产计划排程  |  质量管理（SPC）  |  追溯管理  |  设备管理  |  报表中心",
+      "align": "left",
+      "font_size": 10
+    },
+    {
+      "type": "table",
+      "headers": true,
+      "style": "card",
+      "col_widths": [1.6, 4.4],
+      "font_size": 9,
+      "data": [
+        ["模块", "本项目落地要点（示例内容区）"],
+        ["工单管理", "纸质工单电子化；关键工序扫码过站；异常自动触发责任追溯。"],
+        ["生产计划排程", "从 Excel 迁移到规则排程；插单策略与产能校核；交期承诺可解释。"],
+        ["质量管理（SPC）", "上线前 2 周数据收集；控制图/过程能力分析；关键参数超限告警。"],
+        ["追溯管理", "批次码 + 条码枪扫描；物料→工序→人员→设备链路；支持审计导出。"],
+        ["设备管理", "OPC-UA 接入；老设备网关采集；稼动率与停机原因统计。"],
+        ["报表中心", "日报/周报/异常闭环报表；关键指标看板；导出给总部复审材料。"]
+      ],
+      "caption": "模块说明（复刻：Tab 内容卡片）"
+    },
+
+    { "type": "heading", "text": "客户核心痛点（调研原始结论）", "level": 2 },
+    {
+      "type": "table",
+      "headers": true,
+      "style": "striped",
+      "col_widths": [1.2, 4.8],
+      "font_size": 9,
+      "data": [
+        ["等级", "描述"],
+        ["最痛点", "生产过程全靠纸质工单，发现质量问题无法追溯到具体操作人员和批次原材料。"],
+        ["次痛点", "计划排程依赖 Excel，插单频繁导致产能数据混乱，无法准确承诺交期。"],
+        ["隐性需求", "客户总部（德国）要求在 2023 年前通过 IATF 16949 复审，追溯能力是审核重点。"]
+      ]
+    },
+
+    { "type": "heading", "text": "集成与技术约束", "level": 2 },
+    {
+      "type": "table",
+      "headers": true,
+      "style": "grid",
+      "col_widths": [1.5, 4.5],
+      "font_size": 9,
+      "data": [
+        ["已有系统", "SAP ECC 6.0（生产订单下发）；自研 WMS（仓库）"],
+        ["集成方向", "SAP → MES（工单）；MES → SAP（报工/良品数量）；MES → WMS（物料消耗）"],
+        ["设备协议", "三菱 PLC，支持 OPC-UA；老设备 20 台需加装采集网关"],
+        ["数据治理", "物料主数据与工艺路线需统一编码；历史数据需清洗后再导入"]
+      ]
+    },
+
+    { "type": "heading", "text": "项目亮点（卡片）", "level": 2 },
+    {
+      "type": "table",
+      "headers": true,
+      "style": "card",
+      "col_widths": [6.0],
+      "font_size": 9,
+      "data": [
+        ["亮点清单"],
+        ["追溯方案：采用“批次码 + 条码枪扫描”替代 RFID，成本降低约 60%，客户接受度高。"],
+        ["SPC 模块：上线前先做 2 周数据收集期，用历史数据演示控制图，提升模块价值认同度。"],
+        ["报表中心：输出审核材料包（追溯链路、异常闭环、稼动率），用于总部复审。"]
+      ]
+    },
+
+    { "type": "heading", "text": "项目风险与教训（卡片）", "level": 2 },
+    {
+      "type": "table",
+      "headers": true,
+      "style": "card",
+      "col_widths": [6.0],
+      "font_size": 9,
+      "data": [
+        ["风险与教训"],
+        ["SAP 接口评估：联调低估工期约 2 倍；标准 BAPI 不可用，需重写 RFC。建议合同前置接口评估。"],
+        ["需求变更：中途更换负责人导致计划重排，延期约 3 周。建议增加环境变更的工期保护条款。"],
+        ["设备采集：老设备信号不标准，停机原因需人机结合采集。建议预留网关/改造预算。"]
+      ]
+    },
+
+    { "type": "page_break" },
+
+    { "type": "heading", "text": "交付架构（示意）", "level": 1 },
+    {
+      "type": "flowchart",
+      "direction": "LR",
+      "width": 6.2,
+      "caption": "图：系统数据流（graphviz -> PNG -> DOCX）",
+      "nodes": {
+        "sap": { "label": "SAP ECC\n订单/报工", "shape": "box", "style": "rounded,filled", "color": "#DBEAFE" },
+        "mes": { "label": "MES\n工单/追溯/SPC", "shape": "box", "style": "rounded,filled", "color": "#DCFCE7" },
+        "wms": { "label": "WMS\n入库/出库", "shape": "box", "style": "rounded,filled", "color": "#FEF3C7" },
+        "opc": { "label": "OPC-UA\n设备数据", "shape": "box", "style": "rounded,filled", "color": "#FEE2E2" },
+        "bi": { "label": "报表中心\n看板/导出", "shape": "box", "style": "rounded,filled", "color": "#E0F2FE" }
+      },
+      "edges": [
+        ["sap", "mes", { "label": "生产订单/主数据" }],
+        ["mes", "sap", { "label": "报工/完工" }],
+        ["mes", "wms", { "label": "物料消耗" }],
+        ["opc", "mes", { "label": "采集/稼动率" }],
+        ["mes", "bi", { "label": "指标/追溯链路" }]
+      ]
+    },
+
+    { "type": "heading", "text": "关键指标（示例图表）", "level": 2 },
+    {
+      "type": "chart",
+      "chart_type": "line",
+      "data": { "W1": 68, "W2": 74, "W3": 79, "W4": 82, "W5": 85, "W6": 86 },
+      "title": "稼动率（上线后 6 周）",
+      "ylabel": "%",
+      "caption": "图：稼动率趋势（matplotlib -> PNG -> DOCX）",
+      "show_values": true,
+      "show_grid": true,
+      "legend": false
+    },
+
+    { "type": "heading", "text": "交付清单（可复制到合同附件）", "level": 2 },
+    {
+      "type": "code",
+      "language": "text",
+      "code": "1. MES 核心模块（工单/追溯/SPC/报表）\\n2. SAP 集成接口（下发/报工/完工）\\n3. 设备采集（OPC-UA + 网关）\\n4. 试运行与培训（2 轮）\\n5. 上线验收与 1 个月质保\\n"
+    }
+  ]
+}
+

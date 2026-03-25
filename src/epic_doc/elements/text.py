@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, List, Optional, Union
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt, RGBColor
 
-from epic_doc.utils.xml_helpers import add_paragraph_border_bottom, make_hyperlink
+from epic_doc.utils.xml_helpers import add_paragraph_border_bottom, make_hyperlink, set_run_fonts
 
 if TYPE_CHECKING:
     from docx.document import Document
@@ -58,7 +58,11 @@ def add_heading(
     if run:
         run.font.color.rgb = _rgb(color_map[level])
         run.font.size = Pt(size_map[level])
-        run.font.name = theme.heading_font
+        set_run_fonts(
+            run,
+            ascii_font=theme.heading_font_ascii,
+            cjk_font=theme.heading_font_cjk,
+        )
         run.font.bold = bold_map[level]
         run.font.italic = italic_map[level]
         if level == 1 and theme.h1_caps:
@@ -99,7 +103,11 @@ def add_paragraph(
     pf.space_after  = Pt(theme.body_space_after)
 
     run = para.add_run(text)
-    run.font.name = theme.body_font
+    set_run_fonts(
+        run,
+        ascii_font=theme.body_font_ascii,
+        cjk_font=theme.body_font_cjk,
+    )
     run.font.size = Pt(font_size or theme.body_size)
     run.font.bold = bold
     run.font.italic = italic
@@ -127,7 +135,11 @@ def add_list(
         else:
             para = doc.add_paragraph(style=docx_style)
             run = para.add_run(str(item))
-            run.font.name = theme.body_font
+            set_run_fonts(
+                run,
+                ascii_font=theme.body_font_ascii,
+                cjk_font=theme.body_font_cjk,
+            )
             run.font.size = Pt(theme.body_size)
             run.font.color.rgb = _rgb(theme.body_text)
             # Indent nested levels
@@ -177,7 +189,11 @@ def add_code_block(
         pf.space_before = Pt(0)
         pf.space_after  = Pt(0)
         run = para.add_run(line if line else " ")
-        run.font.name = theme.mono_font
+        set_run_fonts(
+            run,
+            ascii_font=theme.mono_font_ascii,
+            cjk_font=theme.mono_font_cjk,
+        )
         run.font.size = Pt(theme.code_size)
         run.font.color.rgb = _rgb(theme.code_text)
 
@@ -219,14 +235,22 @@ def add_callout(
         title_run = title_para.add_run(title)
         title_run.font.bold = True
         title_run.font.size = Pt(theme.body_size)
-        title_run.font.name = theme.body_font
+        set_run_fonts(
+            title_run,
+            ascii_font=theme.body_font_ascii,
+            cjk_font=theme.body_font_cjk,
+        )
         title_run.font.color.rgb = _rgb(border_color)
         title_para.paragraph_format.space_after = Pt(2)
 
     body_para = cell.add_paragraph()
     body_run = body_para.add_run(text)
     body_run.font.size = Pt(theme.body_size)
-    body_run.font.name = theme.body_font
+    set_run_fonts(
+        body_run,
+        ascii_font=theme.body_font_ascii,
+        cjk_font=theme.body_font_cjk,
+    )
     body_run.font.color.rgb = _rgb(theme.body_text)
     body_para.paragraph_format.space_after = Pt(0)
 

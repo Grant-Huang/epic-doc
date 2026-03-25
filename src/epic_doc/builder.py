@@ -69,16 +69,16 @@ class EpicDoc:
 
         # Normal style
         normal = styles["Normal"]
-        normal.font.name = t.body_font
+        normal.font.name = t.body_font_ascii
         normal.font.size = Pt(t.body_size)
         normal.font.color.rgb = _rgb(t.body_text)
 
         # Heading styles
         _heading_cfg = {
-            "Heading 1": (t.h1_size, t.primary,   t.heading_font, t.h1_bold),
-            "Heading 2": (t.h2_size, t.secondary, t.heading_font, t.h2_bold),
-            "Heading 3": (t.h3_size, t.accent,    t.heading_font, t.h3_bold),
-            "Heading 4": (t.h4_size, t.accent,    t.heading_font, t.h4_bold),
+            "Heading 1": (t.h1_size, t.primary,   t.heading_font_ascii, t.h1_bold),
+            "Heading 2": (t.h2_size, t.secondary, t.heading_font_ascii, t.h2_bold),
+            "Heading 3": (t.h3_size, t.accent,    t.heading_font_ascii, t.h3_bold),
+            "Heading 4": (t.h4_size, t.accent,    t.heading_font_ascii, t.h4_bold),
         }
         for style_name, (size, color, font, bold) in _heading_cfg.items():
             try:

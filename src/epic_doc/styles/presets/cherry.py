@@ -6,8 +6,8 @@ CHERRY = register_theme(Theme(
     display_name="樱花雅粉 Cherry",
     description="日系樱花般的粉红色系，清新而不失精致。适用于品牌手册、活动策划、时尚/美妆行业报告。",
 
-    heading_font="Calibri",
-    body_font="Calibri",
+    heading_font="Arial",
+    body_font="Arial",
     mono_font="Courier New",
 
     h1_size=22,

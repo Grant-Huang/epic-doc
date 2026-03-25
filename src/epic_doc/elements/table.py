@@ -10,6 +10,7 @@ from epic_doc.utils.xml_helpers import (
     set_cell_bg,
     set_cell_borders,
     set_cell_vertical_alignment,
+    set_run_fonts,
     set_table_borders,
     set_table_column_widths,
     set_table_no_borders,
@@ -45,7 +46,11 @@ def _cell_text(cell, text: str, theme: "Theme", font_size: int,
     para.paragraph_format.space_before = Pt(2)
     para.paragraph_format.space_after = Pt(2)
     run = para.add_run(str(text))
-    run.font.name = theme.body_font
+    set_run_fonts(
+        run,
+        ascii_font=theme.body_font_ascii,
+        cjk_font=theme.body_font_cjk,
+    )
     run.font.size = Pt(font_size)
     run.font.bold = bold
     if color:

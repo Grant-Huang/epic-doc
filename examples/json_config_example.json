@@ -1,0 +1,102 @@
+{
+  "theme": "minimal",
+  "meta": {
+    "title": "API 接口文档",
+    "author": "Backend Team",
+    "subject": "API Documentation"
+  },
+  "header": { "text": "API 接口文档 v3.0", "align": "right" },
+  "footer": { "text": "Backend Team", "page_number": true },
+  "blocks": [
+    { "type": "heading", "text": "API 接口文档", "level": 1 },
+    { "type": "heading", "text": "版本 3.0  |  2026-03", "level": 2 },
+    {
+      "type": "callout",
+      "text": "所有接口均需在请求头中携带 Authorization: Bearer <token>，token 有效期为 24 小时。",
+      "style": "warning",
+      "title": "认证说明"
+    },
+    { "type": "toc", "title": "目录", "depth": 3 },
+    { "type": "page_break" },
+    { "type": "heading", "text": "用户接口", "level": 1 },
+    { "type": "heading", "text": "获取用户信息", "level": 2 },
+    { "type": "paragraph", "text": "获取指定用户的详细信息。" },
+    {
+      "type": "table",
+      "data": [
+        ["属性", "值"],
+        ["方法", "GET"],
+        ["路径", "/api/v3/users/{id}"],
+        ["认证", "必须"],
+        ["限流", "100 次/分钟"]
+      ],
+      "headers": true,
+      "style": "minimal",
+      "col_widths": [2.0, 4.0]
+    },
+    { "type": "heading", "text": "请求参数", "level": 3 },
+    {
+      "type": "table",
+      "data": [
+        ["参数名", "位置", "类型", "必须", "说明"],
+        ["id", "path", "string", "是", "用户 ID（UUID 格式）"],
+        ["fields", "query", "string", "否", "指定返回字段，逗号分隔"],
+        ["format", "query", "string", "否", "响应格式：json | xml，默认 json"]
+      ],
+      "headers": true,
+      "style": "grid",
+      "col_widths": [1.2, 1.0, 1.0, 0.8, 2.8]
+    },
+    { "type": "heading", "text": "响应示例", "level": 3 },
+    {
+      "type": "code",
+      "language": "json",
+      "code": "{\n  \"code\": 200,\n  \"data\": {\n    \"id\": \"usr_abc123\",\n    \"name\": \"张三\",\n    \"email\": \"zhangsan@example.com\",\n    \"created_at\": \"2026-01-15T08:00:00Z\",\n    \"roles\": [\"admin\", \"editor\"]\n  }\n}"
+    },
+    { "type": "heading", "text": "创建用户", "level": 2 },
+    { "type": "paragraph", "text": "创建一个新的用户账号。" },
+    {
+      "type": "table",
+      "data": [
+        ["属性", "值"],
+        ["方法", "POST"],
+        ["路径", "/api/v3/users"],
+        ["认证", "必须（管理员权限）"],
+        ["限流", "20 次/分钟"]
+      ],
+      "headers": true,
+      "style": "minimal",
+      "col_widths": [2.0, 4.0]
+    },
+    { "type": "heading", "text": "数据接口", "level": 1 },
+    { "type": "heading", "text": "查询数据集", "level": 2 },
+    { "type": "paragraph", "text": "支持多维度过滤的数据集查询接口，返回分页结果。" },
+    {
+      "type": "code",
+      "language": "bash",
+      "code": "curl -X GET 'https://api.example.com/v3/datasets?page=1&size=20' \\\n  -H 'Authorization: Bearer eyJhbG...' \\\n  -H 'Accept: application/json'"
+    },
+    { "type": "heading", "text": "错误码说明", "level": 1 },
+    {
+      "type": "table",
+      "data": [
+        ["HTTP 状态码", "错误码", "说明", "处理建议"],
+        ["400", "ERR_INVALID_PARAMS", "请求参数不合法", "检查请求参数格式"],
+        ["401", "ERR_UNAUTHORIZED", "未认证或 token 失效", "刷新 token 后重试"],
+        ["403", "ERR_FORBIDDEN", "权限不足", "联系管理员授权"],
+        ["404", "ERR_NOT_FOUND", "资源不存在", "确认资源 ID"],
+        ["429", "ERR_RATE_LIMIT", "请求频率超限", "降低请求频率"],
+        ["500", "ERR_INTERNAL", "服务器内部错误", "联系技术支持"]
+      ],
+      "headers": true,
+      "style": "striped",
+      "col_widths": [1.5, 2.0, 2.0, 2.0]
+    },
+    { "type": "hr" },
+    {
+      "type": "callout",
+      "text": "如有疑问请联系后端团队：backend@example.com，或提交 GitLab Issue。",
+      "style": "info"
+    }
+  ]
+}

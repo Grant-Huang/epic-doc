@@ -65,8 +65,14 @@ def build_from_dict(definition: Dict[str, Any]) -> EpicDoc:
             )
 
     # Blocks
-    for block in definition.get("blocks", []):
+    blocks = definition.get("blocks", [])
+    for block in blocks:
         _process_block(doc, block)
+
+    audit = definition.get("audit") or {}
+    if isinstance(audit, dict) and audit.get("enabled"):
+        title = audit.get("title") if isinstance(audit.get("title"), str) else "引用/追溯表"
+        _append_audit_trail(doc, title=title, blocks=blocks)
 
     return doc
 
@@ -200,3 +206,32 @@ def _parse_merge(merge_raw: Optional[Any]) -> Optional[List]:
         if isinstance(item, (list, tuple)) and len(item) == 4:
             result.append(tuple(int(x) for x in item))
     return result or None
+
+
+def _append_audit_trail(doc: EpicDoc, *, title: str, blocks: list[Any]) -> None:
+    rows: list[list[Any]] = [["BlockIndex", "Type", "Source.doc", "Source.chunk", "Source.offset"]]
+    for idx, block in enumerate(blocks):
+        if not isinstance(block, dict):
+            rows.append([idx, "", "", "", ""])
+            continue
+        btype = str(block.get("type", "") or "")
+        meta = block.get("meta") if isinstance(block.get("meta"), dict) else {}
+        source = meta.get("source") if isinstance(meta.get("source"), dict) else {}
+        rows.append([
+            idx,
+            btype,
+            source.get("doc", ""),
+            source.get("chunk", ""),
+            source.get("offset", ""),
+        ])
+
+    doc.add_page_break()
+    doc.add_heading(title, level=1)
+    doc.add_paragraph("下表用于审计/追溯：从生成块定位回源 Markdown/文档分片。", font_size=10)
+    doc.add_table(
+        data=rows,
+        headers=True,
+        style="grid",
+        col_widths=[0.9, 1.1, 1.8, 1.2, 1.0],
+        font_size=9,
+    )

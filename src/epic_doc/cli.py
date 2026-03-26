@@ -92,35 +92,19 @@ def validate(config: str) -> None:
 
     errors: list[str] = []
 
-    # Check theme
+    # Check theme name early for a crisp error.
     theme_name = definition.get("theme", "professional")
     try:
         from epic_doc.styles import get_theme
+
         get_theme(theme_name)
     except ValueError as exc:
-        errors.append(str(exc))
+        errors.append(f"$.theme: {exc}")
 
-    # Check block types
-    valid_types = {
-        "heading", "paragraph", "list", "code", "code_block", "callout",
-        "hyperlink", "hr", "page_break", "section_break", "toc",
-        "table", "chart", "flowchart", "image",
-    }
-    for i, block in enumerate(definition.get("blocks", [])):
-        btype = block.get("type", "")
-        if btype not in valid_types:
-            errors.append(f"Block #{i}: unknown type '{btype}'")
-        if btype == "table" and "data" not in block:
-            errors.append(f"Block #{i} (table): missing required field 'data'")
-        if btype in ("chart",) and "data" not in block:
-            errors.append(f"Block #{i} (chart): missing required field 'data'")
-        if btype == "flowchart":
-            if "nodes" not in block:
-                errors.append(f"Block #{i} (flowchart): missing required field 'nodes'")
-            if "edges" not in block:
-                errors.append(f"Block #{i} (flowchart): missing required field 'edges'")
-        if btype == "image" and "path" not in block:
-            errors.append(f"Block #{i} (image): missing required field 'path'")
+    from epic_doc.validation.validator import validate_definition
+
+    verrors = validate_definition(definition)
+    errors.extend([e.format() for e in verrors])
 
     if errors:
         click.echo("[fail] Validation errors:", err=True)
@@ -184,61 +168,9 @@ def preview(
 @main.command("schema")
 def schema() -> None:
     """Print the JSON schema for config files to stdout."""
-    schema_def = {
-        "$schema": "https://epic-doc.dev/schema/v1.json",
-        "type": "object",
-        "properties": {
-            "theme": {"type": "string", "description": "Theme ID (see: epic-doc themes)"},
-            "template": {"type": ["string", "null"], "description": "Path to .docx template"},
-            "meta": {
-                "type": "object",
-                "properties": {
-                    "title": {"type": "string"},
-                    "author": {"type": "string"},
-                    "subject": {"type": "string"},
-                    "description": {"type": "string"},
-                },
-            },
-            "header": {
-                "oneOf": [
-                    {"type": "string"},
-                    {
-                        "type": "object",
-                        "properties": {
-                            "text": {"type": "string"},
-                            "align": {"type": "string", "enum": ["left", "center", "right"]},
-                        },
-                    },
-                ]
-            },
-            "footer": {
-                "type": "object",
-                "properties": {
-                    "text": {"type": "string"},
-                    "page_number": {"type": "boolean"},
-                    "align": {"type": "string", "enum": ["left", "center", "right"]},
-                },
-            },
-            "blocks": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "required": ["type"],
-                    "properties": {
-                        "type": {
-                            "type": "string",
-                            "enum": [
-                                "heading", "paragraph", "list", "code", "callout",
-                                "hyperlink", "hr", "page_break", "section_break",
-                                "toc", "table", "chart", "flowchart", "image",
-                            ],
-                        },
-                    },
-                },
-            },
-        },
-    }
-    click.echo(json.dumps(schema_def, indent=2, ensure_ascii=False))
+    from epic_doc.validation.schema_v1 import build_schema_v1
+
+    click.echo(json.dumps(build_schema_v1(), indent=2, ensure_ascii=False))
 
 
 def _generate_preview(theme_name: str, out_path: str) -> None:
